@@ -1,3 +1,5 @@
 config.js
 public/
 node_modules/
+config.tar.gz
+public.tar.gz
