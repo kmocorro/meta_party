@@ -136,7 +136,7 @@ module.exports = function(app){
                 party_confirmed_or_not().then(function(confirmation){
 
                     let qrcode_venue_information = {
-                        server: 'http://192.168.1.1:9000/qrcode?employeeNumber=',
+                        server: 'http://192.168.1.2:9000/qrcode?employeeNumber=',
                         employeeNumber: req.claim.employeeNumber, // refer to the ldap claim token.
                         foodStub: '&foodStub=' + req.claim.employeeNumber,
                         drinkStub: '&drinkStub=' + req.claim.employeeNumber
