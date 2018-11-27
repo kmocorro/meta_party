@@ -16,7 +16,7 @@ function verifyToken(req, res, next){
             claim: {
                 signup: 'valid'
             }
-        }, config.secret, { expiresIn: 300 });
+        }, config.secret);
 
         return res.render('login', {authenticity_token});
     } else {
@@ -25,7 +25,7 @@ function verifyToken(req, res, next){
 
             if(err){
                 
-                let authenticity_token = jwt.sign({id: uuidv4(), claim:{ signup: 'valid'}}, config.secret, {expiresIn:300});
+                let authenticity_token = jwt.sign({id: uuidv4(), claim:{ signup: 'valid'}}, config.secret);
                 return res.status(200).render('login', {authenticity_token});
 
             } else {
