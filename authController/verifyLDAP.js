@@ -109,7 +109,7 @@ module.exports = function(app){
                             }));
 
                         }, function(err){
-                            if(err){return res.send({err: err + ' token.'})};
+                            if(err){return res.send({err: err + ' token. Please refresh the page.'})};
                         });
 
 
