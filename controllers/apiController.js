@@ -162,6 +162,38 @@ module.exports = function(app){
                         });
                     }
 
+                    /** verify if the user is party ready or declined or no account at all. */
+                    function validate_user_on_venue_party_list(){
+                        return new Promise(function(resolve, reject){
+
+                            mysql.pool.getConnection(function(err, connection){
+
+                                connection.query({
+                                    sql: 'SELECT * FROM app_venue_party_list WHERE employeeNumber = ?',
+                                    values: [req.claim.employeeNumber]
+                                },  function(err, results){
+                                    if(err){return reject(err)};
+
+                                    if(typeof results[0] !== 'undefined' && results[0] !== null && results.length > 0){
+                                        if(results[0].attendance == 1){
+                                            resolve('GO');
+                                        } else {
+                                            resolve('NO_QR');
+                                        }
+                                    } else {
+                                        resolve('NO_ACCOUNT');
+                                    }
+
+                                });
+
+                                connection.release();
+
+                            });
+
+                        });
+                    }
+
+
                     /** qrcode gen */
                     function generate_qrcode(){
                         return new Promise(function(resolve, reject){
@@ -185,16 +217,33 @@ module.exports = function(app){
                         });
                     }
 
-                    generate_qrcode().then(function(img_render_html){
 
-                        res.render('home', { authenticity_token, name: req.claim.displayName, department: req.claim.department, title: req.claim.title, employeeNumber: req.claim.employeeNumber, username: req.claim.username, givenName: req.claim.givenName, shift: party_list_data[0].shift , party_sched: personal_sched[0].day, supervisor: party_list_data[0].supervisor, confirmation: confirmation, img_render_html });
+                    validate_user_on_venue_party_list().then(function(check_response){ 
+
+                        if(check_response == 'GO'){
+
+                            generate_qrcode().then(function(img_render_html){
+
+                                res.render('home', { authenticity_token, name: req.claim.displayName, department: req.claim.department, title: req.claim.title, employeeNumber: req.claim.employeeNumber, username: req.claim.username, givenName: req.claim.givenName, shift: party_list_data[0].shift , party_sched: personal_sched[0].day, supervisor: party_list_data[0].supervisor, confirmation: confirmation, img_render_html });
+        
+                            },  function(err){
+                                res.send({err: 'Error occured while generating qrcode ' + err})
+                            });
+
+                        } else if(check_response == 'NO_QR') {
+
+                            res.render('home', { authenticity_token, name: req.claim.displayName, department: req.claim.department, title: req.claim.title, employeeNumber: req.claim.employeeNumber, username: req.claim.username, givenName: req.claim.givenName, shift: party_list_data[0].shift , party_sched: personal_sched[0].day, supervisor: party_list_data[0].supervisor, confirmation: confirmation });
+
+                        } else {
+
+                            res.send({err: 'Sorry, you are not belong to the year-end party list. If this is a mistake, call HR. '});
+
+                        }
+                        
 
                     },  function(err){
-                        res.send({err: 'Error occured while generating qrcode ' + err})
+                        res.send({err: err});
                     });
-
-                    
-
 
                 },  function(err){
                     res.send({err: 'Error occured at confirmed or not. ' + err})

@@ -340,11 +340,20 @@
                                 <li class="list-group-item">
                                 <b>Supervisor</b> <a class="pull-right"><%= supervisor %></a>
                                 </li>
-                                <li class="list-group-item"><img src="<%= img_render_html %>" style="width: 100%; height: auto;" align="middle" alt="qrcode"/>
-                                </li>
+                                <% if(typeof img_render_html !== 'undefined') { %>
+
+                                    <li class="list-group-item"><img src="<%= img_render_html %>" style="width: 100%; height: auto;" align="middle" alt="qrcode"/>
+                                    </li>
+
+                                <% } else { %>
+                                
+                                    <p>You either declined or not registered to the event.</p>
+
+                                <% } %>
                             </ul>
-                            
+                            <% if(typeof img_render_html !== 'undefined') { %>
                             <p class="text-muted">This QR Code will serve as your ticket.</p>
+                            <% } %>
                         </div>
                     </div>
                     
