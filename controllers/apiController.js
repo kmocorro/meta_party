@@ -236,7 +236,7 @@ module.exports = function(app){
 
                         } else {
 
-                            res.send({err: 'Sorry, you are not belong to the year-end party list. If this is a mistake, call HR. '});
+                            res.send({err: 'Sorry, you do not belong in the year-end party list. If this is a mistake, call HR.  '});
 
                         }
                         
